@@ -17,7 +17,7 @@ lazy val root = (project in file("."))
       "com.plasmaconduit"          %% "json"           % "0.25.0",
       "io.argonaut"                %% "argonaut"       % "6.1",
       "com.fasterxml.jackson.core" %  "jackson-core"   % "2.8.1",
-      "io.spray"                   %%  "spray-json"    % "1.3.2",
+      "io.spray"                   %% "spray-json"    % "1.3.2",
       "com.typesafe.play"          %  "play-json_2.11" % "2.5.4"
     )
   )
