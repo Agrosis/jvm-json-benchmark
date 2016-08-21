@@ -2,12 +2,12 @@ package com.jantox.jsonbenchmark
 
 import java.io.File
 
-import com.fasterxml.jackson.databind.{ObjectMapper => JacksonObjectMapper}
 import com.plasmaconduit.json.{JsonParser => PlasmaConduitJsonParser}
-import argonaut.{Parse => ArgonautParser}
+import argonaut.{Parse => ArgonautParse}
+import spray.json.{JsonParser => SprayJsonParser}
 import play.api.libs.json.{Json => PlayJson}
 import com.google.gson.{JsonParser => GsonJsonParser}
-import spray.json.{JsonParser => SprayJsonParser}
+import com.fasterxml.jackson.databind.{ObjectMapper => JacksonObjectMapper}
 
 import org.openjdk.jmh.annotations.{Scope, State, Setup, Benchmark}
 
@@ -28,7 +28,7 @@ class ParseBigJson {
 
   @Benchmark
   def argonaut(): Unit = {
-    ArgonautParser.parse(string)
+    val parsed = ArgonautParse.parse(string)
   }
 
   @Benchmark
@@ -41,15 +41,17 @@ class ParseBigJson {
     val json = PlayJson.parse(string)
   }
 
+  val parser = new GsonJsonParser()
+
   @Benchmark
   def gson(): Unit = {
-    val parser = new GsonJsonParser()
     val json = parser.parse(string)
   }
 
+  val mapper = new JacksonObjectMapper()
+
   @Benchmark
   def jackson(): Unit = {
-    val mapper = new JacksonObjectMapper()
     val node = mapper.readTree(string)
   }
 

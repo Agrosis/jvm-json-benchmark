@@ -1,17 +1,17 @@
 package com.jantox.jsonbenchmark
 
-import com.fasterxml.jackson.databind.{ObjectMapper => JacksonObjectMapper}
 import com.plasmaconduit.json.{JsonParser => PlasmaConduitJsonParser}
-import argonaut.{Parse => ArgonautParser}
+import argonaut.{Parse => ArgonautParse}
+import spray.json.{JsonParser => SprayJsonParser}
 import play.api.libs.json.{Json => PlayJson}
 import com.google.gson.{JsonParser => GsonJsonParser}
-import spray.json.{JsonParser => SprayJsonParser}
+import com.fasterxml.jackson.databind.{ObjectMapper => JacksonObjectMapper}
 
 import org.openjdk.jmh.annotations.{Scope, State, Benchmark}
 
-object ParseTinyJson {
+@State(Scope.Thread)
+class ParseTinyJson {
 
-  @State(Scope.Thread)
   val string =
     """
       |{
@@ -25,40 +25,38 @@ object ParseTinyJson {
       |}
     """.stripMargin
 
-}
-
-class ParseTinyJson {
-
   @Benchmark
   def plasmaconduit(): Unit = {
-    val success = PlasmaConduitJsonParser.parse(ParseTinyJson.string)
+    val success = PlasmaConduitJsonParser.parse(string)
   }
 
   @Benchmark
   def argonaut(): Unit = {
-    val parsed = ArgonautParser.parse(ParseTinyJson.string)
+    val parsed = ArgonautParse.parse(string)
   }
 
   @Benchmark
   def spray(): Unit = {
-    val ast = SprayJsonParser(ParseTinyJson.string)
+    val ast = SprayJsonParser(string)
   }
 
   @Benchmark
   def play(): Unit = {
-    val json = PlayJson.parse(ParseTinyJson.string)
+    val json = PlayJson.parse(string)
   }
+
+  val parser = new GsonJsonParser()
 
   @Benchmark
   def gson(): Unit = {
-    val parser = new GsonJsonParser()
-    val json = parser.parse(ParseTinyJson.string)
+    val json = parser.parse(string)
   }
+
+  val mapper = new JacksonObjectMapper()
 
   @Benchmark
   def jackson(): Unit = {
-    val mapper = new JacksonObjectMapper()
-    val node = mapper.readTree(ParseTinyJson.string)
+    val node = mapper.readTree(string)
   }
 
 }
